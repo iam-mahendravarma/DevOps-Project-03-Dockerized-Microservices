@@ -101,3 +101,38 @@ Mahendravarma
 🏷️ Tags
 
 #DevOpsEngineer #DockerCompose #MultiServiceArchitecture #React #Python #MongoDB #JenkinsPipeline #DockerHub #CI_CD #DevOpsProjects #LearningInPublic #TechPortfolio
+
+🧹 Lint & Test
+
+Frontend (React):
+
+```
+cd DevOps-Project-03-Dockerized-Microservices/frontend
+# add once if not present
+npm install -D eslint prettier eslint-config-prettier eslint-plugin-prettier
+
+# run
+npm run lint
+npm run test:ci
+
+# in docker
+docker compose run --rm frontend sh -lc "npm ci && npm run lint && npm run test:ci"
+```
+
+Backend (FastAPI/Python):
+
+```
+cd DevOps-Project-03-Dockerized-Microservices/backend
+pip install -U pip
+pip install -r requirements.txt
+pip install -U ruff black mypy pytest pytest-asyncio httpx
+
+# lint & test
+ruff check .
+black --check .
+mypy .
+pytest
+
+# in docker
+docker compose run --rm backend sh -lc "pip install -r requirements.txt && pip install ruff black mypy pytest pytest-asyncio httpx && ruff check . && black --check . && pytest"
+```
