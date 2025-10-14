@@ -1,50 +1,103 @@
-# 🚀 markone-helm-microservices
+DevOps Project 03 – Dockerized Microservices (React + FastAPI + MongoDB)
 
-A production-ready Helm-based Kubernetes deployment template for a microservices architecture.
+📌 Overview
 
----
+This third project in my DevOps Project Series evolves a monolith into a multi-service setup. It runs a React frontend, a Python FastAPI backend, and MongoDB, all orchestrated with Docker Compose. It demonstrates service isolation, persistent storage, and CI/CD with Jenkins.
 
-## 📦 Architecture
+| Component        | Technology               |
+| ---------------- | ------------------------ |
+| Frontend         | React                    |
+| Backend API      | Python (FastAPI)         |
+| Database         | MongoDB                  |
+| Containerization | Docker, Docker Compose   |
+| CI/CD            | Jenkins + GitHub Webhook |
+| Version Control  | GitHub                   |
 
-Markone
-──> Frontend Service 
-──> Backend Service
-──> MongoDB Database
+🔧 Services & Ports
 
+- Frontend (React, served via `serve`): http://localhost:3000
+- Backend (FastAPI via `uvicorn`): http://localhost:8000 (Swagger UI at `/docs`)
+- MongoDB: container-only (no host port exposed), persistent volume `mongo_data`
 
-Each component is deployed as a separate Helm subchart, making it modular and easy to maintain.
+🧩 Data & Networking
 
----
+- MongoDB connection string used by backend: `mongodb://mongodb:27017/<database>`
+- Internal Docker network: `app-network` (services resolve by name, e.g., `backend`, `mongodb`)
+- Data persistence: volume `mongo_data` mounted to `/data/db` in the `mongo` container
 
-## 🚀 Getting Started
+⚙️ Environment Variables
 
-### Prerequisites
+The backend expects the environment variable `MONGODB_URL`.
 
-- Kubernetes cluster (minikube, kind, or cloud provider)
+Example value for local Compose networking:
 
-- Helm 3+
+```
+MONGODB_URL=mongodb://mongodb:27017/task_management
+```
 
-- Docker (for building custom images)
+Note: Ensure your Compose file sets `MONGODB_URL` (not `MONGO_URL`) for the backend service so the application connects correctly.
 
-- Ingress Controller (e.g., NGINX)
+🚀 Quick Start
 
-### 1. Clone the repo
+```
+# Build and run all services (detached)
+docker compose up -d --build
 
-git clone https://github.com/iam-mahendravarma/markone-helm-microservices.git
+# View logs for a specific service
+docker compose logs -f backend
 
-cd markone-helm-microservices
+# Stop and remove containers, networks, volumes (named volumes persist by default)
+docker compose down
+```
 
-### 2. Package dependencies
+Once running:
 
-helm dependency update
+- Frontend: `http://localhost:3000`
+- API root: `http://localhost:8000/`
+- API docs: `http://localhost:8000/docs`
 
-### 3. Install Helm chart
+🧪 CI/CD (Jenkins)
 
-helm install markone .
+- GitHub webhook triggers the Jenkins pipeline on push
+- Lints/tests for React and Python
+- Builds Docker images and can push to a registry (Docker Hub)
+- Deploys with `docker compose` on the target environment
 
-### 4. Access the application
+To push images manually, tag and push according to your registry naming (example):
 
-kubectl port-forward svc/frontend 8080:80
+```
+# Example only — replace with your registry/name:tag
+docker compose build
+docker tag devops-project-03-frontend:latest <dockerhub-username>/react-frontend:v1
+docker tag devops-project-03-backend:latest <dockerhub-username>/python-backend:v1
+docker push <dockerhub-username>/react-frontend:v1
+docker push <dockerhub-username>/python-backend:v1
+```
 
-Then open: http://localhost:8080
- 
+📈 What You’ll Learn
+
+- Multi-container orchestration with Docker Compose
+- Service isolation with Docker networking
+- Persistent storage for stateful services (MongoDB)
+- CI/CD integration with Jenkins + GitHub Webhooks
+- Preparing multi-service apps for production-ready deployment
+
+🧭 Next Steps
+
+- Project 4: Advanced Docker – Private Registry, Image Scanning (Trivy), Optimized CI/CD
+- Project 5: Kubernetes deployment with Helm + ArgoCD
+
+👤 Author
+
+Mahendravarma
+
+💻 DevOps Engineer | Jenkins | Docker | Kubernetes | CI/CD | Cloud
+
+🔗 Related Projects
+
+- Project 1 – Monolithic Next.js App with Jenkins CI
+- Project 2 – Dockerized Monolithic Next.js App
+
+🏷️ Tags
+
+#DevOpsEngineer #DockerCompose #MultiServiceArchitecture #React #Python #MongoDB #JenkinsPipeline #DockerHub #CI_CD #DevOpsProjects #LearningInPublic #TechPortfolio
