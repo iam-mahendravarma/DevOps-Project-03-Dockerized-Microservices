@@ -95,8 +95,8 @@ Mahendravarma
 
 🔗 Related Projects
 
-- Project 1 – Monolithic Next.js App with Jenkins CI
-- Project 2 – Dockerized Monolithic Next.js App
+- Project 1 – Monolithic Next.js App with Jenkins CI https://github.com/iam-mahendravarma/Devops-Project-01-Monolithic.git
+- Project 2 – Dockerized Monolithic Next.js App https://github.com/iam-mahendravarma/Devops-Project-02-Dockerized-Monolithic.git
 
 🏷️ Tags
 
