@@ -4,13 +4,14 @@ pipeline {
   environment {
     REGISTRY = 'docker.io'
     DOCKERHUB_CREDENTIALS = 'dockerhub-creds' 
-    DOCKERHUB_NAMESPACE = 'iam-mahendravarma'
+    DOCKERHUB_NAMESPACE = 'iammahendravarma20'
 
-    FRONTEND_IMAGE = "${DOCKERHUB_NAMESPACE}/react-frontend"
-    BACKEND_IMAGE  = "${DOCKERHUB_NAMESPACE}/python-backend"
+    FRONTEND_IMAGE = "${DOCKERHUB_NAMESPACE}/taskmanagement-frontend"
+    BACKEND_IMAGE  = "${DOCKERHUB_NAMESPACE}/taskmanagement-backend"
 
-    FRONTEND_CONTEXT = './frontend'
-    BACKEND_CONTEXT  = './backend'
+    FRONTEND_CONTEXT = 'DevOps-Project-03-Dockerized-Microservices/frontend'
+    BACKEND_CONTEXT  = 'DevOps-ProjecYt-03-Dockerized-Microservices/backend'
+    ROOT_CONTEXT     = 'DevOps-Project-03-Dockerized-Microservices'
 
     IMAGE_TAG = "${env.BUILD_NUMBER}"
   }
