@@ -14,7 +14,7 @@ pipeline {
             steps {
                 echo 'Cloning repository...'
                 git branch: 'main',
-                    url: 'https://github.com/iam-mahendravarma/DevOps-Project-03-MultiService-Docker.git',
+                    url: 'https://github.com/iam-mahendravarma/DevOps-Project-03-Dockerized-Microservices.git',
                     credentialsId: 'github-token'
             }
         }
