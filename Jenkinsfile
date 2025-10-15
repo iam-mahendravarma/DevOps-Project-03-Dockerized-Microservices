@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKERHUB_CREDENTIALS = 'dockerhub-creds'  // Jenkins credentials ID for Docker Hub
+        DOCKERHUB_CREDENTIALS = 'dockerhub-creds'   // Jenkins credentials ID for Docker Hub
         DOCKERHUB_USERNAME = 'iammahendravarma20'
         FRONTEND_IMAGE = "${DOCKERHUB_USERNAME}/react-frontend:latest"
         BACKEND_IMAGE = "${DOCKERHUB_USERNAME}/python-backend:latest"
@@ -19,15 +19,17 @@ pipeline {
             }
         }
 
-        stage('Frontend: Install & Lint') {
+        stage('Frontend: Install, Lint & Test') {
             steps {
                 dir('frontend') {
                     echo "Installing frontend dependencies..."
                     sh 'npm install'
+
                     echo "Running frontend lint..."
-                    sh 'npm run lint || echo "Lint issues found"'
+                    sh 'npm run lint || echo "Lint issues found (check ESLint output)"'
+
                     echo "Running frontend tests..."
-                    sh 'npm test || echo "No tests or some tests failed"'
+                    sh 'npm test || echo "⚠️ No tests or some tests failed"'
                 }
             }
         }
@@ -35,10 +37,15 @@ pipeline {
         stage('Backend: Install & Test') {
             steps {
                 dir('backend') {
-                    echo "Installing backend dependencies..."
-                    sh 'pip install -r requirements.txt'
-                    echo "Running backend tests..."
-                    sh 'pytest || echo "No tests or some tests failed"'
+                    echo 'Installing backend dependencies...'
+                    sh '''
+                        apt-get update && apt-get install -y python3 python3-venv python3-pip
+                        python3 -m venv venv
+                        . venv/bin/activate
+                        pip install -r requirements.txt
+                        echo "backend dependencies installed successfully."
+                    '''
+                    sh '. venv/bin/activate && pytest || echo "⚠️ Backend tests skipped or failed"'
                 }
             }
         }
@@ -55,9 +62,11 @@ pipeline {
 
         stage('Push Docker Images') {
             steps {
-                withCredentials([usernamePassword(credentialsId: "${DOCKERHUB_CREDENTIALS}", 
-                    passwordVariable: 'DOCKER_PASSWORD', 
-                    usernameVariable: 'DOCKER_USERNAME')]) {
+                withCredentials([usernamePassword(
+                    credentialsId: "${DOCKERHUB_CREDENTIALS}",
+                    usernameVariable: 'DOCKER_USERNAME',
+                    passwordVariable: 'DOCKER_PASSWORD'
+                )]) {
                     echo "Logging into Docker Hub..."
                     sh "echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin"
 
@@ -74,16 +83,18 @@ pipeline {
 
         stage('Deploy with Docker Compose') {
             steps {
-                echo "Deploying containers using docker-compose..."
-                sh 'docker-compose down || true'
-                sh 'docker-compose up -d --build'
+                echo "Deploying containers using Docker Compose..."
+                sh '''
+                    docker-compose down || true
+                    docker-compose up -d --build
+                '''
             }
         }
     }
 
     post {
         always {
-            echo "Cleaning up dangling Docker images..."
+            echo "🧹 Cleaning up dangling Docker images..."
             sh 'docker system prune -f || echo "Nothing to prune"'
         }
         success {
