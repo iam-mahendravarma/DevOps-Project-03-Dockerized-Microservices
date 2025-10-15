@@ -98,10 +98,10 @@ pipeline {
             sh 'docker system prune -f || echo "Nothing to prune"'
         }
         success {
-            echo "✅ Pipeline completed successfully! 🎉"
+            echo "Pipeline completed successfully!"
         }
         failure {
-            echo "❌ Pipeline failed! Check logs for errors."
+            echo "Pipeline failed! Check logs for errors."
         }
     }
 }
